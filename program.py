@@ -48,6 +48,11 @@ def matrixMultiply(m1, m2):
 def T(m):
     return trace(m) / math.sqrt(determinant(m))
 
+# Computes the matrix given by negating all entries of the input matrix.
+
+def negate(m):
+    return [-m[0], -m[1], -m[2], -m[3]]
+
 #### Argument Parsing and Sanity Checks ####
 
 # NOTE: This method of reading in the matrices is quite ugly. Don't @ me.
