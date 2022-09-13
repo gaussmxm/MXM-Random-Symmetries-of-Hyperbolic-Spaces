@@ -12,8 +12,14 @@ import sys
 
 #### Common Methods ####
 
+def crossRatio(rg, ag, rh, ah):
+    return ((rg - rh) * (ag - ah)) / ((rg - ah) * (ag - rh))
+
 def determinant(m):
     return (m[0] * m[3]) - (m[1] * m[2])
+
+def invert(m)
+    return [m[3], -m[1], -m[2], m[0]]
 
 def negate(m):
     return [-m[0], -m[1], -m[2], -m[3]]
@@ -21,16 +27,13 @@ def negate(m):
 def trace(m):
     return m[0] + m[3]
 
-def T(m):
-    return trace(m) / math.sqrt(determinant(m))
-
 #### Argument Parsing and Sanity Checks ####
 
 # NOTE: Inputting the matrices is not implemented yet. For now just edit the
 # values for g and h to change them.
 
-g = [1, 0, 0, 1]
-h = [1, 0, 0, 1]
+g = [2, 3, 1, 2]
+h = [2, 3, 1, 2]
 
 if determinant(g) != 1:
     print("Error: The matrix g is not in SL(2,Z).")
@@ -43,7 +46,33 @@ if determinant(h) != 1:
 #### Algorithm Cases ####
 
 def caseOne(g, h):
-    print("Error: Case I is not implemented yet.")
+    if trace(g) > trace(h):
+        g, h = h, g
+
+    # NOTE: I have not proved that there is always exactly one attracting and
+    # one repelling fixed point. This computation assumes that here.
+
+    ag = ((g[0] - g[3]) + math.sqrt(((trace(g)) ** 2) - 4)) / (2 * g[2])
+    rg = ((g[0] - g[3]) - math.sqrt(((trace(g)) ** 2) - 4)) / (2 * g[2])
+
+    if (((g[2] * ag) + g[3]) ** 2) < 1:
+        ag, rg = rg, ag
+
+    ah = ((h[0] - h[3]) + math.sqrt(((trace(h)) ** 2) - 4)) / (2 * h[2])
+    rh = ((h[0] - h[3]) - math.sqrt(((trace(h)) ** 2) - 4)) / (2 * h[2])
+
+    if (((h[2] * ah) + h[3]) ** 2) < 1:
+        ah, rh = rh, ah
+
+    if ag == ah or rg == rh or ag == rh or rg == ah:
+        print("Result: The subgroup < g, h > is either not discrete", end = '')
+        print(" or elementary.")
+        sys.exit(0)
+
+    if crossRatio(rg, ag, rh, ah) > 1:
+        h = invert(h)
+
+    print("Error: Case I is not fully implemented yet.")
     sys.exit(1)
 
 def caseTwo(g, h):
@@ -62,20 +91,20 @@ print(f"g = {g}")
 print(f"h = {h}")
 print()
 
-if T(g) < 0:
+if trace(g) < 0:
     g = negate(g)
 
-if T(h) < 0:
+if trace(h) < 0:
     h = negate(h)
 
-if T(g) > T(h):
+if trace(g) > trace(h):
     g, h = h, g
 
-if T(g) > 2:
+if trace(g) > 2:
     caseOne(g, h)
-elif T(g) == 2 and T(h) > 2:
+elif trace(g) == 2 and trace(h) > 2:
     caseTwo(g, h)
-elif T(g) == 2 and T(h) == 2:
+elif trace(g) == 2 and trace(h) == 2:
     caseThree(g, h)
 else:
     print("Result: The subgroup < g, h > is either not free or not discrete.")
