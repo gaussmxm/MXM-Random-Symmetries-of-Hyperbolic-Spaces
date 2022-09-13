@@ -76,11 +76,11 @@ h = sys.argv[5:]
 # NOTE: End of ugliness.
 
 if determinant(g) <= 0:
-    print("Error: Matrix g does not have positive determinant.")
+    print("Error: The determinant of g is not positive.")
     sys.exit(1)
 
 if determinant(h) <= 0:
-    print("Error: Matrix h does not have positive determinant.")
+    print("Error: The determinant of h is not positive.")
     sys.exit(1)
 
 #### 0. First Computations ####
