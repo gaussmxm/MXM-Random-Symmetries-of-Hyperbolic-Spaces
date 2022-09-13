@@ -41,7 +41,9 @@ def matrixMultiply(m1, m2):
             (m1[2] * m2[1]) + (m1[3] * m2[3])]
 
 # Compute the quantity used throughout the algorithm for the matrix m. The
-# quantity is given by T(m) = tr(m) / sqrt(det(m)).
+# quantity is given by T(m) = tr(m) / sqrt(det(m)). Note that this quantity is
+# always well-defined, since the matrices we work with always have positive
+# determinants.
 
 def T(m):
     return trace(m) / math.sqrt(determinant(m))
