@@ -9,6 +9,12 @@
 import math
 import sys
 
+# NOTE: This method will cause a problem if you don't check beforehand that
+# the result is infinite.
+
+def apply(m, z):
+    return ((m[0] * z) + m[1]) / ((m[2] * z) + m[3])
+
 def caseOne(g, h):
     if trace(g) > trace(h):
         g, h = h, g
@@ -103,8 +109,6 @@ def caseTwo(g, h):
     caseTwo(g, matrixMult(g, h))
 
 def caseThree(g, h):
-    print("Error: Case III is not implemented yet.")
-    sys.exit(1)
 
     if trace(g) < 0:
         g = negate(g)
@@ -130,7 +134,28 @@ def caseThree(g, h):
         print("Result: The subgroup < g, h > is elementary.")
         sys.exit(0)
 
-    # NOTE: Step III-3 is missing.
+    C = 0
+
+    if isInfg:
+        if h[0] == -h[3]:
+            C = 1
+        else:
+            C = (fh - apply(g, fh)) / (fh - (h[0] / h[2]))
+    elif isInfh:
+        if g[0] == -g[3]:
+            C = 1
+        else:
+            C = (fg - apply(h, fg)) / (fg - (g[0] / g[2]))
+    else:
+
+        # NOTE: Not finished here yet.
+
+        print("Error: Case III is not fully implemented yet (two ", end = "")
+        print("non-infinite fixed points.")
+        sys.exit(1)
+
+    if C > 0:
+        h = invert(h)
 
     if abs(trace(matrixMult(g, h))) < 2:
         print("Result: The subgroup < g, h > is either not free or ", end = "")
@@ -171,8 +196,8 @@ def trace(m):
 # NOTE: Inputting the matrices from the commandline is not implemented yet, so
 # for now just edit the definitions of g and h here to change them.
 
-g = [1, 2, 0, 1]
-h = [1, 0, 2, 1]
+g = [1, 0, 0, 1]
+h = [1, 0, 0, 1]
 
 print()
 print(f"g = {g}")
