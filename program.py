@@ -16,14 +16,8 @@ def caseOne(g, h):
     ag = ((g[0] - g[3]) + math.sqrt((trace(g) ** 2) - 4)) / (2 * g[2])
     rg = ((g[0] - g[3]) - math.sqrt((trace(g) ** 2) - 4)) / (2 * g[2])
 
-    if trace(g) < -2:
-        ag, rg = rg, ag
-
     ah = ((h[0] - h[3]) + math.sqrt((trace(h) ** 2) - 4)) / (2 * h[2])
     rh = ((h[0] - h[3]) - math.sqrt((trace(h) ** 2) - 4)) / (2 * h[2])
-
-    if trace(h) < -2:
-        ah, rh = rh, ah
 
     # NOTE: Float comparison?
 
@@ -73,7 +67,25 @@ def caseTwo(g, h):
     if trace(g) > trace(h):
         g, h = h, g
 
-    # NOTE: Steps II-1, II-2, II-3, II-4 are missing
+    ah = ((h[0] - h[3]) + math.sqrt((trace(h) ** 2) - 4)) / (2 * h[2])
+    rh = ((h[0] - h[3]) - math.sqrt((trace(h) ** 2) - 4)) / (2 * h[2])
+
+    isInf = True
+    fg = 0
+
+    if g[2] != 0:
+        isInf = False
+        fg = (g[0] - g[3]) / (2 * g[2])
+
+    if not isInf and (fg == ah or fg == rh):
+        print("Result: The subgroup < g, h > is not discrete.")
+        sys.exit(0)
+
+    # NOTE: Steps II-2, II-3 are missing
+
+    if abs(h[1] * g[1]) < 1:  
+        print("Result: The subgroup < g, h > is not discrete.")
+        sys.exit(0)
 
     if trace(matrixMult(g, h)) < -2:
         print("Result: The subgroup < g, h > is non-elementary, ", end = "")
@@ -100,7 +112,25 @@ def caseThree(g, h):
     if trace(h) < 0:
         h = negate(h)
 
-    # NOTE: Steps III-2, III-3 are missing.
+    isInfg = True
+    fg = 0
+
+    if g[2] != 0:
+        isInfg = False
+        fg = (g[0] - g[3]) / (2 * g[2])
+
+    isInfh = True
+    fh = 0
+
+    if h[2] != 0:
+        isInfh = False
+        fh = (h[0] - h[3]) / (2 * h[2])
+
+    if (isInfg and isInfh) or (not isInfg and not isInfh and fg == fh):
+        print("Result: The subgroup < g, h > is elementary.")
+        sys.exit(0)
+
+    # NOTE: Step III-3 is missing.
 
     if abs(trace(matrixMult(g, h))) < 2:
         print("Result: The subgroup < g, h > is either not free or ", end = "")
