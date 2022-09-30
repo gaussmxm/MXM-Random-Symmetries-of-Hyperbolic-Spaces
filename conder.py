@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# Freeness algorithm from "Discrete and free subgroups of SL_2" by Matthew Conder, p. 15.
+
 import itertools
 import sys
 
