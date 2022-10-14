@@ -1,5 +1,6 @@
 import argparse
 import itertools
+import multiprocessing
 
 def tr(m):
     return m[0] + m[3]
@@ -21,13 +22,13 @@ def mult(m1, m2):
 
 def is_free(X, Y):
     if abs(tr(X)) < 2 or abs(tr(Y)) < 2:
-        return False
+        return 0
 
     if tr(comm(X, Y)) <= 2 and tr(comm(X, Y)) > -2:
-        return False
+        return 0
 
     if tr(comm(X, Y)) <= -2:
-        return True
+        return 1
 
     if tr(X) < 0:
         X = negate(X)
@@ -42,7 +43,7 @@ def is_free(X, Y):
         m = min(tr(mult(X, Y)), tr(mult(inv(X), Y)))
 
         if abs(m) < 2:
-            return False
+            return 0
 
         if m >= 2:
             if tr(mult(X, Y)) == m:
@@ -50,7 +51,7 @@ def is_free(X, Y):
             else:
                 Y = mult(inv(X), Y)
         else:
-            return True
+            return 1
 
 parser = argparse.ArgumentParser(description = "Compute proportions of free groups.")
 parser.add_argument("radius", type = int, help = "radius of open ball to compute in")
@@ -59,7 +60,7 @@ radius = parser.parse_args().radius
 if radius < 0:
     parser.error("radius must be nonnegative")
 
-a = (1, 0, 1, 1)
+a = (0, -1, 1, 0)
 b = (1, 1, 0, 1)
 
 generators = [a, inv(a), b, inv(b)]
@@ -68,6 +69,7 @@ matrices = set([(1, 0, 0, 1)])
 for i in range(0, radius):
     matrices.update(mult(n, m) for (n, m) in itertools.product(matrices, generators))
 
-    total = sum(1 for (x, y) in itertools.combinations(matrices, 2) if is_free(x,y))
+    with multiprocessing.Pool() as p:
+        total = sum(p.starmap(is_free, itertools.combinations(matrices, 2)))
 
     print("[%2d] %.5f" % (i + 1, (2 * total) / (len(matrices) ** 2)))
