@@ -20,7 +20,10 @@ def mult(m1, m2):
             (m1[2] * m2[0]) + (m1[3] * m2[2]),
             (m1[2] * m2[1]) + (m1[3] * m2[3]))
 
-def is_free(X, Y):
+def is_free(args):
+    X = args[0]
+    Y = args[1]
+
     if abs(tr(X)) < 2 or abs(tr(Y)) < 2:
         return 0
 
@@ -70,6 +73,6 @@ for i in range(0, radius):
     matrices.update(mult(n, m) for (n, m) in itertools.product(matrices, generators))
 
     with multiprocessing.Pool() as p:
-        total = sum(p.starmap(is_free, itertools.combinations(matrices, 2)))
+        total = sum(p.imap(is_free, itertools.combinations(matrices, 2), 10000))
 
     print("[%2d] %.5f" % (i + 1, (2 * total) / (len(matrices) ** 2)))
