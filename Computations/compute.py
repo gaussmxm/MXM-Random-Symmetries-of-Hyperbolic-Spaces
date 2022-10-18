@@ -63,16 +63,17 @@ radius = parser.parse_args().radius
 if radius < 0:
     parser.error("radius must be nonnegative")
 
-a = (0, -1, 1, 0)
+a = (1, 0, 1, 1)
 b = (1, 1, 0, 1)
 
 generators = [a, inv(a), b, inv(b)]
 matrices = set([(1, 0, 0, 1)])
 
-for i in range(0, radius):
-    matrices.update(mult(n, m) for (n, m) in itertools.product(matrices, generators))
+if __name__ == "__main__":
+    for i in range(0, radius):
+        matrices.update(mult(n, m) for (n, m) in itertools.product(matrices, generators))
 
-    with multiprocessing.Pool() as p:
-        total = sum(p.imap(is_free, itertools.combinations(matrices, 2), 10000))
+        with multiprocessing.Pool(6) as p:
+            total = sum(p.imap(is_free, itertools.combinations(matrices, 2), 10000))
 
-    print("[%2d] %.5f" % (i + 1, (2 * total) / (len(matrices) ** 2)))
+        print("[%2d] %.5f" % (i + 1, (2 * total) / (len(matrices) ** 2)))
